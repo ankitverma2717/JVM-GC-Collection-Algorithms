@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+}
+
+group = 'com.gcsimulator'
+version = '1.0.0'
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+javafx {
+    version = '21.0.1'
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.graphics']
+}
+
+application {
+    mainClass = 'com.gcsimulator.GCSimulatorApp'
+}
+
+dependencies {
+    // JavaFX dependencies are managed by the javafx plugin
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+// Create executable JAR with all dependencies
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'com.gcsimulator.GCSimulatorApp'
+        )
+    }
+    
+    // Include all dependencies
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+// Configure run task for JavaFX
+run {
+    // Enable JavaFX
+    systemProperty 'javafx.verbose', 'true'
+}

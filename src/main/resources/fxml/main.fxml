@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gcsimulator.controller.MainController"
+            styleClass="root">
+    
+    <!-- Top: Menu and Toolbar -->
+    <top>
+        <VBox>
+            <!-- Menu Bar -->
+            <MenuBar>
+                <Menu text="File">
+                    <MenuItem text="Reset JVM" onAction="#handleResetJVM"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem text="Exit" onAction="#handleExit"/>
+                </Menu>
+                <Menu text="View">
+                    <MenuItem text="Clear Log" onAction="#handleClearLog"/>
+                </Menu>
+                <Menu text="Help">
+                    <MenuItem text="About" onAction="#handleAbout"/>
+                    <MenuItem text="Algorithm Documentation" onAction="#handleAlgorithmDocumentation"/>
+                </Menu>
+            </MenuBar>
+            
+            <!-- Toolbar -->
+            <HBox styleClass="toolbar" spacing="10" alignment="CENTER_LEFT">
+                <padding>
+                    <Insets top="10" right="15" bottom="10" left="15"/>
+                </padding>
+                
+                <Label text="GC Algorithm:" styleClass="toolbar-label"/>
+                <ComboBox fx:id="gcAlgorithmComboBox" prefWidth="250"/>
+                
+                <Separator orientation="VERTICAL"/>
+                
+                <Button fx:id="allocateButton" text="Allocate Objects" styleClass="action-button"/>
+                <Button fx:id="triggerGCButton" text="Trigger GC" styleClass="action-button"/>
+                <Button fx:id="playPauseButton" text="Play" styleClass="action-button"/>
+                <Button fx:id="resetButton" text="Reset" styleClass="action-button"/>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <!-- Center: Main content -->
+    <center>
+        <SplitPane dividerPositions="0.6">
+            <!-- Left: Memory Visualization -->
+            <VBox spacing="10" styleClass="panel">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+                
+                <Label text="Memory Regions" styleClass="section-title">
+                    <font>
+                        <Font size="18" name="System Bold"/>
+                    </font>
+                </Label>
+                
+                <Separator/>
+                
+                <!-- Heap Visualization -->
+                <VBox spacing="5">
+                    <Label text="Young Generation" styleClass="subsection-title"/>
+                    
+                    <VBox spacing="3">
+                        <Label fx:id="edenLabel" text="Eden: 0 / 0 MB"/>
+                        <ProgressBar fx:id="edenUsageBar" prefWidth="Infinity" prefHeight="25"/>
+                    </VBox>
+                    
+                    <HBox spacing="10">
+                        <VBox spacing="3" HBox.hgrow="ALWAYS">
+                            <Label fx:id="survivor0Label" text="Survivor-0: 0 / 0 MB"/>
+                            <ProgressBar fx:id="survivor0UsageBar" prefWidth="Infinity" prefHeight="20"/>
+                        </VBox>
+                        <VBox spacing="3" HBox.hgrow="ALWAYS">
+                            <Label fx:id="survivor1Label" text="Survivor-1: 0 / 0 MB"/>
+                            <ProgressBar fx:id="survivor1UsageBar" prefWidth="Infinity" prefHeight="20"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+                
+                <Separator/>
+                
+                <VBox spacing="5">
+                    <Label text="Old Generation" styleClass="subsection-title"/>
+                    <Label fx:id="oldGenLabel" text="Old Gen: 0 / 0 MB"/>
+                    <ProgressBar fx:id="oldGenUsageBar" prefWidth="Infinity" prefHeight="25"/>
+                </VBox>
+                
+                <Separator/>
+                
+                <VBox spacing="5">
+                    <Label text="Metaspace" styleClass="subsection-title"/>
+                    <Label fx:id="metaspaceLabel" text="Metaspace: 0 / 0 MB"/>
+                    <ProgressBar fx:id="metaspaceUsageBar" prefWidth="Infinity" prefHeight="20"/>
+                </VBox>
+                
+                <Separator/>
+                
+                <VBox spacing="5">
+                    <Label text="Physical RAM" styleClass="subsection-title"/>
+                    <Label fx:id="ramLabel" text="RAM: 0 / 0 MB"/>
+                    <ProgressBar fx:id="ramUsageBar" prefWidth="Infinity" prefHeight="20"/>
+                </VBox>
+                
+                <Region VBox.vgrow="ALWAYS"/>
+                
+                <!-- Memory Chart -->
+                <VBox spacing="5">
+                    <Label text="Memory Usage Over Time" styleClass="subsection-title"/>
+                    <LineChart fx:id="memoryChart" prefHeight="250" legendVisible="true">
+                        <xAxis>
+                            <NumberAxis label="Time" animated="false"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis label="Memory (MB)" animated="false"/>
+                        </yAxis>
+                    </LineChart>
+                </VBox>
+            </VBox>
+            
+            <!-- Right: Statistics and Log -->
+            <VBox spacing="10" styleClass="panel">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+                
+                <Label text="Statistics" styleClass="section-title">
+                    <font>
+                        <Font size="18" name="System Bold"/>
+                    </font>
+                </Label>
+                
+                <Separator/>
+                
+                <GridPane hgap="10" vgap="8">
+                    <Label text="Total Allocations:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="stat-label"/>
+                    <Label fx:id="totalAllocationsLabel" text="0" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="stat-value"/>
+                    
+                    <Label text="Total GC Collections:" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="stat-label"/>
+                    <Label fx:id="totalGCsLabel" text="0" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="stat-value"/>
+                    
+                    <Label text="Last Pause Time:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="stat-label"/>
+                    <Label fx:id="lastPauseTimeLabel" text="0 ms" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="stat-value"/>
+                    
+                    <Label text="Avg Pause Time:" GridPane.rowIndex="3" GridPane.columnIndex="0" styleClass="stat-label"/>
+                    <Label fx:id="avgPauseTimeLabel" text="0.00 ms" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="stat-value"/>
+                </GridPane>
+                
+                <Separator/>
+                
+                <VBox spacing="5" VBox.vgrow="ALWAYS">
+                    <Label text="Event Log" styleClass="subsection-title"/>
+                    <TextArea fx:id="logTextArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS" 
+                              styleClass="log-area"/>
+                </VBox>
+            </VBox>
+        </SplitPane>
+    </center>
+</BorderPane>
