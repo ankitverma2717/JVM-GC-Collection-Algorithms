@@ -22,79 +22,101 @@ This simulator provides an interactive educational tool for understanding how di
   - Manual and automatic object allocation
   - Manual GC triggering
   - Play/Pause simulation mode
-  - Reset JVM state
+  - Reset JVM state via menu
 
 - **Performance Metrics**:
   - Total allocations and GC collections
   - Last and average pause times
   - Bytes collected per GC
 
+- **Menu Functionality**:
+  - **File Menu**: Reset JVM, Exit
+  - **View Menu**: Clear Log
+  - **Help Menu**: About, Algorithm Documentation
+
 ## Prerequisites
 
-- **Java 21** or later
-- **Maven 3.x**
-- **JavaFX 21.0.1** (automatically managed by Maven)
+- **Java 17** or later (Java 21 recommended for full feature support)
+- **No installation required!** - Project includes Gradle Wrapper
 
-## Installation
+## Quick Start
 
-### 1. Install Java 21
-
-Make sure you have Java 21 installed and configured:
+### Clone the Repository
 
 ```bash
-java -version
+git clone https://github.com/ankitverma2717/JVM-GC-Collection-Algorithms.git
+cd JVM-GC-Collection-Algorithms
 ```
 
-### 2. Install Maven
+### Run the Application
 
-**Windows (using Chocolatey)**:
-```powershell
-choco install maven
+**Windows:**
+```bash
+.\gradlew.bat run
 ```
 
-**Windows (manual)**:
-1. Download from https://maven.apache.org/download.cgi
-2. Extract to `C:\Program Files\Apache\maven`
-3. Add `bin` directory to PATH
-4. Verify: `mvn --version`
+**Linux/Mac:**
+```bash
+./gradlew run
+```
+
+That's it! The Gradle Wrapper will automatically:
+- Download Gradle 8.5 (first time only)
+- Download all dependencies (JavaFX 21.0.1, etc.)
+- Compile the project
+- Launch the JavaFX application
 
 ## Building the Project
 
-```bash
-# Navigate to project directory
-cd gc-simulator
-
-# Clean and compile
-mvn clean compile
-
-# Run tests (if available)
-mvn test
-
-# Package as JAR
-mvn package
-```
-
-## Running the Application
-
-### Using Maven (Recommended)
+### Compile Only
 
 ```bash
-mvn javafx:run
+# Windows
+.\gradlew.bat compileJava
+
+# Linux/Mac
+./gradlew compileJava
 ```
 
-### Using Java Command
+### Build JAR
 
 ```bash
-java --module-path path/to/javafx-sdk/lib \
-     --add-modules javafx.controls,javafx.fxml \
-     -jar target/gc-simulator-1.0.0.jar
+# Windows
+.\gradlew.bat build
+
+# Linux/Mac
+./gradlew build
 ```
+
+The executable JAR will be created in `build/libs/gc-simulator-1.0.0.jar`
+
+### Clean Build
+
+```bash
+# Windows
+.\gradlew.bat clean build
+
+# Linux/Mac
+./gradlew clean build
+```
+
+## Gradle Commands Reference
+
+| Command | Description |
+|---------|-------------|
+| `.\gradlew.bat run` | Run the application |
+| `.\gradlew.bat build` | Build executable JAR |
+| `.\gradlew.bat compileJava` | Compile source code only |
+| `.\gradlew.bat clean` | Delete build directory |
+| `.\gradlew.bat test` | Run tests |
+| `.\gradlew.bat tasks` | View all available tasks |
+| `.\gradlew.bat dependencies` | View dependency tree |
 
 ## Usage Guide
 
 ### Getting Started
 
-1. **Launch the application** using one of the methods above
+1. **Launch the application** using `.\gradlew.bat run`
 2. **Select a GC algorithm** from the dropdown menu
 3. **Click "Allocate Objects"** to manually allocate objects
 4. **Click "Play"** to start automatic allocation simulation
@@ -117,6 +139,14 @@ java --module-path path/to/javafx-sdk/lib \
 - **Trigger GC**: Force garbage collection immediately
 - **Play/Pause**: Toggle automatic object allocation
 - **Reset**: Clear all memory and restart the JVM
+
+#### Menu Bar
+
+- **File → Reset JVM**: Resets the entire simulation
+- **File → Exit**: Close the application
+- **View → Clear Log**: Clear the event log
+- **Help → About**: Application information
+- **Help → Algorithm Documentation**: Documentation location
 
 #### Statistics
 
@@ -156,27 +186,53 @@ java --module-path path/to/javafx-sdk/lib \
 
 ```
 gc-simulator/
-├── pom.xml                     # Maven configuration
+├── build.gradle                # Gradle build configuration
+├── settings.gradle             # Gradle settings
+├── gradlew.bat                 # Gradle wrapper (Windows)
+├── gradlew                     # Gradle wrapper (Unix)
 ├── README.md                   # This file
-├── algorithm.md                # Detailed GC algorithm documentation
+├── algorithm.md                # Detailed GC algorithm documentation (539 lines)
+├── gradle/
+│   └── wrapper/               # Gradle wrapper files
 └── src/
     └── main/
         ├── java/
         │   └── com/gcsimulator/
         │       ├── GCSimulatorApp.java         # Main entry point
         │       ├── controller/                 # UI controllers
+        │       │   └── MainController.java    # Main UI logic
         │       ├── gc/                         # GC implementations
         │       │   ├── java8/                  # Java 8 algorithms
+        │       │   │   ├── SerialGC.java
+        │       │   │   ├── ParallelGC.java
+        │       │   │   ├── ConcurrentMarkSweep.java
+        │       │   │   └── G1GC.java
         │       │   ├── java17/                 # Java 17 algorithms
+        │       │   │   ├── G1GCJava17.java
+        │       │   │   ├── ZGC.java
+        │       │   │   └── ShenandoahGC.java
         │       │   └── java21/                 # Java 21 algorithms
+        │       │       ├── G1GCJava21.java
+        │       │       ├── GenerationalZGC.java
+        │       │       └── GenerationalShenandoah.java
         │       └── model/                      # JVM simulation model
         │           ├── jvm/                    # JVM components
         │           ├── memory/                 # Memory regions
         │           └── objects/                # Object representations
         └── resources/
-            ├── fxml/                           # JavaFX layouts
-            └── styles/                         # CSS styling
+            ├── fxml/
+            │   └── main.fxml                   # JavaFX UI layout
+            └── styles/
+                └── application.css             # Modern dark theme
 ```
+
+## Technology Stack
+
+- **Language**: Java 17+
+- **UI Framework**: JavaFX 21.0.1
+- **Build Tool**: Gradle 8.5 (via Wrapper)
+- **Architecture**: MVC Pattern
+- **Styling**: CSS (Modern Dark Theme)
 
 ## Documentation
 
@@ -189,14 +245,77 @@ For detailed information about each GC algorithm, see [algorithm.md](algorithm.m
 - **Configuration guides**
 - **Use case recommendations**
 
+## Development
+
+### Project Requirements
+
+- Java 17+ JDK
+- Gradle is handled by wrapper (no installation needed)
+
+### IDE Setup
+
+**IntelliJ IDEA:**
+1. Open project folder
+2. IntelliJ will auto-detect Gradle
+3. Run `Main` configuration or use `.\gradlew.bat run`
+
+**Eclipse:**
+1. Import as Gradle project
+2. Use Gradle wrapper for build
+
+**VS Code:**
+1. Install Java Extension Pack
+2. Open project folder
+3. Terminal: `.\gradlew.bat run`
+
 ## Contributing
 
 This is an educational project. If you find issues or have suggestions:
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## Troubleshooting
+
+### Gradle Wrapper fails to download
+
+- Check internet connection
+- If behind proxy, configure Gradle proxy settings
+- Try again - downloads are cached after first successful run
+
+### JavaFX not loading
+
+- Ensure Java 17+ is installed: `java --version`
+- JavaFX dependencies are automatically managed by Gradle
+- Try clean build: `.\gradlew.bat clean build`
+
+### Application won't start
+
+- Check you're in the project directory
+- Verify Java version is 17 or higher
+- Try: `.\gradlew.bat clean run`
+
+### OutOfMemoryError during simulation
+
+- This is expected behavior when testing GC under memory pressure
+- The simulator will automatically trigger GC
+- Use **File → Reset JVM** or click Reset button
+
+### Build errors
+
+```bash
+# Clean and rebuild
+.\gradlew.bat clean build --refresh-dependencies
+```
+
+## Performance Tips
+
+- Run with higher memory: `.\gradlew.bat run -Xmx1g`
+- For faster compilation: `.\gradlew.bat build --parallel`
+- Skip tests: `.\gradlew.bat build -x test`
 
 ## License
 
@@ -209,27 +328,17 @@ This project is for educational purposes.
 - JEP 333: ZGC (Experimental)
 - JEP 377: ZGC (Production)
 - JEP 439: Generational ZGC
-
-## Troubleshooting
-
-### Maven not found
-
-- Ensure Maven is installed and added to PATH
-- Restart terminal after installation
-- Verify with `mvn --version`
-
-### JavaFX errors
-
-- The project uses JavaFX 21.0.1 which is managed by Maven
-- Ensure you're using Java 21
-- Dependencies will download automatically
-
-### OutOfMemoryError during simulation
-
-- This is expected behavior when testing GC under memory pressure
-- The simulator will automatically trigger GC
-- Click "Reset" to clear memory and start fresh
+- [Gradle User Guide](https://docs.gradle.org/current/userguide/userguide.html)
+- [JavaFX Documentation](https://openjfx.io/)
 
 ## Acknowledgments
 
-Built with JavaFX and Maven, simulating the incredible engineering work of the OpenJDK GC teams.
+Built with JavaFX and Gradle, simulating the incredible engineering work of the OpenJDK GC teams.
+
+---
+
+**GitHub**: [JVM-GC-Collection-Algorithms](https://github.com/ankitverma2717/JVM-GC-Collection-Algorithms)
+
+**Author**: Ankit Verma
+
+**Version**: 1.0.0
